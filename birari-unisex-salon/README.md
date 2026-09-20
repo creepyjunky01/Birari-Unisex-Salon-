@@ -1,6 +1,5 @@
 
-# Birari Unisex Salon — QR Pre-Booking & Offer Platform
-
+# Birari Unisex Salon — QR Pre-Booking & Offer Platforms
 
 
 A ₹0-cost, full-stack demo/MVP that takes a customer from **QR scan → premium
