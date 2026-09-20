@@ -1,0 +1,111 @@
+// Birari Unisex Salon — Prisma schema
+// Uses PostgreSQL so it works on serverless hosts (Netlify, Vercel, etc.),
+// which have no persistent disk for a SQLite file. This project is wired up
+// to a free Supabase Postgres database. For pure local/offline trial without
+// any external DB, you can temporarily switch provider back to "sqlite".
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Settings {
+  id                  Int     @id @default(1)
+  salonName           String  @default("Birari Unisex Salon")
+  salonLogo           String  @default("/assets/birari-unisex-salon-logo.png")
+  ownerWhatsappNumber String
+  upiId               String
+  phonepeNumber       String?
+  googlepayNumber     String?
+  paytmNumber         String?
+  prebookingAmount    Int     @default(100)
+  updatedAt           DateTime @updatedAt
+}
+
+model Service {
+  id        String     @id @default(cuid())
+  name      String
+  isActive  Boolean    @default(true)
+  sortOrder Int        @default(0)
+  createdAt DateTime   @default(now())
+  customers Customer[]
+}
+
+model Offer {
+  id           String        @id @default(cuid())
+  title        String
+  description  String?
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  scratchCards ScratchCard[]
+}
+
+model Customer {
+  id             String       @id @default(cuid())
+  registrationId String       @unique
+  name           String
+  mobile         String
+  dob            String?
+  serviceId      String
+  service        Service      @relation(fields: [serviceId], references: [id])
+  createdAt      DateTime     @default(now())
+  payment        Payment?
+  scratchCard    ScratchCard?
+}
+
+model Payment {
+  id               String   @id @default(cuid())
+  registrationId   String   @unique
+  customerId       String   @unique
+  customer         Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  amount           Int
+  paymentMethod    String   @default("UPI")
+  // Pending | Payment Submitted | Payment Verified | Payment Failed
+  paymentStatus    String   @default("Payment Submitted")
+  paymentReference String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model ScratchCard {
+  id            String    @id @default(cuid())
+  customerId    String    @unique
+  customer      Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  offerId       String?
+  offer         Offer?    @relation(fields: [offerId], references: [id])
+  token         String    @unique
+  // Locked | Unlocked | Redeemed
+  status        String    @default("Locked")
+  secretKeyUsed String?
+  unlockedAt    DateTime?
+  redeemedAt    DateTime?
+  createdAt     DateTime  @default(now())
+}
+
+model SecretKey {
+  id               String    @id @default(cuid())
+  code             String    @unique
+  expiresAt        DateTime?
+  isActive         Boolean   @default(true)
+  usedByCustomerId String?
+  usedAt           DateTime?
+  createdAt        DateTime  @default(now())
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+model AdminSession {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+}
