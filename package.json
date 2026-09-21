@@ -3,10 +3,9 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "build": "prisma generate --schema=birari-unisex-salon/prisma/schema.prisma && cd birari-unisex-salon && node prisma/seed.js && ../node_modules/.bin/next build && rm -rf ../.next && cp -R .next ../.next",
+    "build": "prisma generate --schema=birari-unisex-salon/prisma/schema.prisma && mkdir -p node_modules/next/node_modules && rm -rf node_modules/next/node_modules/styled-jsx && cp -R node_modules/styled-jsx node_modules/next/node_modules/styled-jsx && cd birari-unisex-salon && node prisma/seed.js && ../node_modules/.bin/next build && rm -rf ../.next && cp -R .next ../.next",
     "dev": "cd birari-unisex-salon && ../node_modules/.bin/next dev",
-    "start": "cd birari-unisex-salon && ../node_modules/.bin/next start",
-    "postinstall": "node -e \"const fs=require('fs'); const src='node_modules/styled-jsx'; const dst='node_modules/next/node_modules/styled-jsx'; if(fs.existsSync(src)){fs.mkdirSync('node_modules/next/node_modules',{recursive:true}); fs.cpSync(src,dst,{recursive:true});}\""
+    "start": "cd birari-unisex-salon && ../node_modules/.bin/next start"
   },
   "dependencies": {
     "@prisma/client": "5.19.1",
@@ -15,7 +14,7 @@
     "qrcode": "1.5.3",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "styled-jsx": "5.1.6"
+    "styled-jsx": "5.1.2"
   },
   "devDependencies": {
     "@types/bcryptjs": "2.4.6",
