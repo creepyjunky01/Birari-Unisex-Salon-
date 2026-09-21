@@ -5,7 +5,8 @@
   "scripts": {
     "build": "prisma generate --schema=birari-unisex-salon/prisma/schema.prisma && cd birari-unisex-salon && node prisma/seed.js && ../node_modules/.bin/next build && rm -rf ../.next && cp -R .next ../.next",
     "dev": "cd birari-unisex-salon && ../node_modules/.bin/next dev",
-    "start": "cd birari-unisex-salon && ../node_modules/.bin/next start"
+    "start": "cd birari-unisex-salon && ../node_modules/.bin/next start",
+    "postinstall": "node -e \"const fs=require('fs'); const src='node_modules/styled-jsx'; const dst='node_modules/next/node_modules/styled-jsx'; if(fs.existsSync(src)){fs.mkdirSync('node_modules/next/node_modules',{recursive:true}); fs.cpSync(src,dst,{recursive:true});}\""
   },
   "dependencies": {
     "@prisma/client": "5.19.1",
