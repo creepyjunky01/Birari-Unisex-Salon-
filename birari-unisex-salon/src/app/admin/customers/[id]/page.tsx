@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import { requireAdminPage } from "@/lib/admin-guard";
 import { prisma } from "@/lib/db";
 import AdminShell from "@/components/admin/AdminShell";
+import DeleteCustomerButton from "@/components/admin/DeleteCustomerButton";
+import { deleteCustomerAction } from "@/lib/admin-actions";
 import { revalidatePath } from "next/cache";
 
 async function markPaymentAction(customerId: string, status: string) {
@@ -81,6 +83,20 @@ export default async function AdminCustomerDetailPage({ params }: { params: { id
           <DetailRow
             label="Redeemed At"
             value={customer.scratchCard?.redeemedAt?.toLocaleString("en-IN") || "—"}
+          />
+        </div>
+
+        <div className="card sm:col-span-2 border-red-200">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-red-500">
+            Danger Zone
+          </p>
+          <p className="mb-4 text-sm text-black/60">
+            Permanently delete this registration, including its payment and offer records.
+          </p>
+          <DeleteCustomerButton
+            customerId={customer.id}
+            action={deleteCustomerAction}
+            label="Delete Registration"
           />
         </div>
       </div>

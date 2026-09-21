@@ -2,6 +2,8 @@ import Link from "next/link";
 import { requireAdminPage } from "@/lib/admin-guard";
 import { prisma } from "@/lib/db";
 import AdminShell from "@/components/admin/AdminShell";
+import DeleteCustomerButton from "@/components/admin/DeleteCustomerButton";
+import { deleteCustomerAction } from "@/lib/admin-actions";
 
 type SearchParams = {
   q?: string;
@@ -85,6 +87,7 @@ export default async function AdminCustomersPage({
               <th className="px-4 py-3">Payment</th>
               <th className="px-4 py-3">Offer</th>
               <th className="px-4 py-3">Date</th>
+              <th className="px-4 py-3">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-black/5">
@@ -107,11 +110,14 @@ export default async function AdminCustomersPage({
                 <td className="px-4 py-3 text-black/50">
                   {c.createdAt.toLocaleDateString("en-IN")}
                 </td>
+                <td className="px-4 py-3">
+                  <DeleteCustomerButton customerId={c.id} action={deleteCustomerAction} />
+                </td>
               </tr>
             ))}
             {customers.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-4 py-10 text-center text-black/40">
+                <td colSpan={8} className="px-4 py-10 text-center text-black/40">
                   No customers match your filters.
                 </td>
               </tr>
