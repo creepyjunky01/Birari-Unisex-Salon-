@@ -10,8 +10,6 @@ export type ValidationResult = {
   errors: Partial<Record<keyof RegistrationInput, string>>;
 };
 
-const INDIAN_MOBILE_REGEX = /^[6-9]\d{9}$/;
-
 export function validateRegistration(input: RegistrationInput): ValidationResult {
   const errors: ValidationResult["errors"] = {};
 
@@ -27,8 +25,6 @@ export function validateRegistration(input: RegistrationInput): ValidationResult
   const mobile = (input.mobile ?? "").replace(/\D/g, "");
   if (!mobile) {
     errors.mobile = "Please enter your mobile number.";
-  } else if (!INDIAN_MOBILE_REGEX.test(mobile)) {
-    errors.mobile = "Enter a valid 10-digit mobile number.";
   }
 
   if (input.dob) {
