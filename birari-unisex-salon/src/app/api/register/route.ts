@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
             customerId: created.id,
             amount: settings.prebookingAmount,
             paymentMethod: "UPI",
-            paymentStatus: "Payment Submitted"
+            paymentStatus: "Pending"
           }
         });
 
