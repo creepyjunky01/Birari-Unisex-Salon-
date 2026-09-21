@@ -29,9 +29,6 @@ export default function RegistrationForm({
   function validateClientSide(): FormErrors {
     const next: FormErrors = {};
     if (!name.trim()) next.name = "Please enter your full name.";
-    const digits = mobile.replace(/D/g, "");
-    if (!digits) next.mobile = "Please enter your mobile number.";
-    else if (!/^[6-9]d{9}$/.test(digits)) next.mobile = "Enter a valid 10-digit mobile number.";
     if (!serviceId) next.serviceId = "Please select a service.";
     return next;
   }
@@ -90,7 +87,7 @@ export default function RegistrationForm({
 
           <div>
             <label htmlFor="mobile" className="label-text">Mobile Number</label>
-            <input id="mobile" type="tel" inputMode="numeric" autoComplete="tel" maxLength={10} value={mobile} onChange={(e) => setMobile(e.target.value.replace(/D/g, "").slice(0, 10))} className={`input-field ${errors.mobile ? "input-error" : ""}`} placeholder="10-digit mobile number" aria-invalid={!!errors.mobile} aria-describedby={errors.mobile ? "mobile-error" : undefined} />
+            <input id="mobile" type="tel" inputMode="numeric" autoComplete="tel" value={mobile} onChange={(e) => setMobile(e.target.value.replace(/\D/g, ""))} className={`input-field ${errors.mobile ? "input-error" : ""}`} placeholder="10-digit mobile number" aria-invalid={!!errors.mobile} aria-describedby={errors.mobile ? "mobile-error" : undefined} />
             {errors.mobile && <p id="mobile-error" className="field-error-text">{errors.mobile}</p>}
           </div>
 
