@@ -4,10 +4,17 @@ import Logo from "@/components/Logo";
 import WatermarkBackground from "@/components/WatermarkBackground";
 import { ChevronRightIcon } from "@/components/icons";
 import { useTransitionNav } from "@/components/PageTransitionProvider";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import type { SalonSettings } from "@/lib/settings";
 
 export default function LandingFlow({ settings }: { settings: SalonSettings }) {
+  const router = useRouter();
   const { navigate } = useTransitionNav();
+
+  useEffect(() => {
+    router.prefetch("/register");
+  }, [router]);
 
   return (
     <main className="relative min-h-dvh overflow-hidden bg-ink">
