@@ -20,43 +20,69 @@ export function useTransitionNav() {
   return ctx;
 }
 
-const COVER_MS = 550;
-const REVEAL_MS = 550;
+// Total animation time is fast (COVER_MS + REVEAL_MS), and the actual page
+// navigation starts partway through the cover animation so it overlaps
+// with the visual instead of adding on top of it.
+const COVER_MS = 320;
+const REVEAL_MS = 320;
+const PUSH_AT_MS = 160;
+// Hard ceiling: if the new page somehow hasn't finished loading by this
+// point after the curtain closes, reveal anyway rather than staying stuck.
+const SAFETY_MS = 3500;
 
 export default function PageTransitionProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [phase, setPhase] = useState<Phase>("idle");
   const [isPending, startTransition] = useTransition();
-  const coverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const revealTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
+  function clearAllTimers() {
+    timersRef.current.forEach(clearTimeout);
+    timersRef.current = [];
+  }
+
+  useEffect(() => clearAllTimers, []);
+
+  // Once fully covered, wait for the navigation to finish (isPending false)
+  // OR the safety timeout, whichever comes first — never both, never stuck.
   useEffect(() => {
-    if (phase === "covered" && !isPending) {
+    if (phase !== "covered") return;
+
+    let finished = false;
+    const finish = () => {
+      if (finished) return;
+      finished = true;
       setPhase("revealing");
-      revealTimerRef.current = setTimeout(() => setPhase("idle"), REVEAL_MS);
-    }
-    return () => {
-      if (revealTimerRef.current) clearTimeout(revealTimerRef.current);
+      const t = setTimeout(() => setPhase("idle"), REVEAL_MS);
+      timersRef.current.push(t);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPending, phase]);
 
-  useEffect(() => {
-    return () => {
-      if (coverTimerRef.current) clearTimeout(coverTimerRef.current);
-      if (revealTimerRef.current) clearTimeout(revealTimerRef.current);
-    };
-  }, []);
+    const safety = setTimeout(finish, SAFETY_MS);
+    timersRef.current.push(safety);
+
+    if (!isPending) {
+      finish();
+    }
+
+    return () => clearTimeout(safety);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, isPending]);
 
   function navigate(href: string) {
     if (phase !== "idle") return;
     setPhase("covering");
-    coverTimerRef.current = setTimeout(() => {
-      setPhase("covered");
+
+    const pushTimer = setTimeout(() => {
       startTransition(() => {
         router.push(href);
       });
+    }, PUSH_AT_MS);
+    timersRef.current.push(pushTimer);
+
+    const coverTimer = setTimeout(() => {
+      setPhase("covered");
     }, COVER_MS);
+    timersRef.current.push(coverTimer);
   }
 
   const transformClass =
@@ -69,7 +95,7 @@ export default function PageTransitionProvider({ children }: { children: React.R
           : "translate-y-full";
 
   const durationClass =
-    phase === "covering" || phase === "revealing" ? "duration-[550ms]" : "duration-0";
+    phase === "covering" ? "duration-[320ms]" : phase === "revealing" ? "duration-[320ms]" : "duration-0";
 
   return (
     <TransitionContext.Provider value={{ navigate }}>
