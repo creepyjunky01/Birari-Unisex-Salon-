@@ -1,10 +1,14 @@
-import Link from "next/link";
+"use client";
+
 import Logo from "@/components/Logo";
 import WatermarkBackground from "@/components/WatermarkBackground";
 import { ChevronRightIcon } from "@/components/icons";
+import { useTransitionNav } from "@/components/PageTransitionProvider";
 import type { SalonSettings } from "@/lib/settings";
 
 export default function LandingFlow({ settings }: { settings: SalonSettings }) {
+  const { navigate } = useTransitionNav();
+
   return (
     <main className="relative min-h-dvh overflow-hidden bg-ink">
       <WatermarkBackground />
@@ -40,10 +44,14 @@ export default function LandingFlow({ settings }: { settings: SalonSettings }) {
           </p>
         </div>
 
-        <Link href="/register" className="btn-primary mt-8">
+        <button
+          type="button"
+          onClick={() => navigate("/register")}
+          className="btn-primary mt-8"
+        >
           Book Your Appointment
           <ChevronRightIcon className="h-4 w-4" />
-        </Link>
+        </button>
 
         <p className="mt-3 text-xs text-white/40">Takes less than a minute</p>
       </div>
