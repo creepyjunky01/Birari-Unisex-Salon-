@@ -83,3 +83,19 @@
     opacity: 0.05;
   }
 }
+
+@layer base {
+  @keyframes birari-snip {
+    0%,
+    100% {
+      transform: rotate(90deg) scale(1);
+    }
+    50% {
+      transform: rotate(90deg) scale(0.82);
+    }
+  }
+
+  .animate-birari-snip {
+    animation: birari-snip 0.5s ease-in-out infinite;
+  }
+}
