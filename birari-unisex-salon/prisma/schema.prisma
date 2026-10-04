@@ -23,6 +23,7 @@ model Settings {
   googlepayNumber     String?
   paytmNumber         String?
   prebookingAmount    Int     @default(100)
+  maintenanceMode     Boolean @default(false)
   updatedAt           DateTime @updatedAt
 }
 

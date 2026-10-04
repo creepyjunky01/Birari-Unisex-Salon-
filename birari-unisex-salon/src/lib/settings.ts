@@ -9,6 +9,7 @@ export type SalonSettings = {
   googlepayNumber: string | null;
   paytmNumber: string | null;
   prebookingAmount: number;
+  maintenanceMode: boolean;
 };
 
 /**
@@ -31,6 +32,7 @@ export async function getSettings(): Promise<SalonSettings> {
     phonepeNumber: process.env.PHONEPE_NUMBER || null,
     googlepayNumber: process.env.GOOGLEPAY_NUMBER || null,
     paytmNumber: process.env.PAYTM_NUMBER || null,
-    prebookingAmount: parseInt(process.env.PREBOOKING_AMOUNT || "100", 10)
+    prebookingAmount: parseInt(process.env.PREBOOKING_AMOUNT || "100", 10),
+    maintenanceMode: false,
   };
 }
